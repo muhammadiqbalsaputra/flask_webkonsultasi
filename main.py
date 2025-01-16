@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
-from DB_Operations import get_konsultasi_data, update_balasan, get_konsultasi, insert_balasan
+from flask import Flask, render_template, request, redirect, url_for, session
+from DB_Operations import get_konsultasi_data, update_balasan, get_konsultasi, insert_balasan, connect_db, validate_login
 
 import pymysql
 
@@ -19,20 +19,10 @@ def tentang():
 def formKonsul():
     return render_template('formKonsultasi.html')
 
-# Route untuk halaman Login
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        # Proses login (misalnya, validasi dengan data user)
-        return f"Login berhasil! Selamat datang, {username}."
-    return render_template('login.html')
-
 # konsultasi
 @app.route('/konsultasi', methods=['GET', 'POST'])
 def konsultasi():
-    connection = pymysql.connect(host='localhost', user='root', password='', db='webkonsultasi')
+    connection = connect_db()
     cursor = connection.cursor()
 
     # Menampilkan data konsultasi
@@ -48,6 +38,28 @@ def konsultasi():
     
     connection.close()
     return render_template('konsultasi.html', data=data_konsultasi)
+
+# form login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = validate_login(username, password)
+        # Verifikasi username dan password
+        if user:
+            session['username'] = username
+            return redirect(url_for('konsultasidokter'))
+        else:
+            return "Login gagal! Username atau password salah."
+    
+    return render_template('login.html')
+
+@app.route('/konsultasidokter')
+def konsultasidokter():
+    # Halaman setelah login berhasil
+    return render_template('dokter/konsultasidokter.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

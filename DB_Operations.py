@@ -56,20 +56,38 @@ def update_balasan(konsultasi_id, balasan):
         conn.close()
 
 def insert_balasan(id_konsultasi, balasan):
-    connection = pymysql.connect(host='localhost', user='root', password='', db='mari_peduli')
-    cursor = connection.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
     
     sql = "UPDATE konsultasi SET balasan = %s WHERE id = %s"
     cursor.execute(sql, (balasan, id_konsultasi))
-    connection.commit()
-    connection.close()
+    conn.commit()
+    conn.close()
 
 def get_konsultasi():
-    connection = pymysql.connect(host='localhost', user='root', password='', db='mari_peduli')
-    cursor = connection.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
     
     cursor.execute("SELECT id, nama, keluhan, tanggal_konsultasi, balasan FROM konsultasi")
     data = cursor.fetchall()
     
-    connection.close()
+    conn.close()
     return data
+
+def validate_login(username, password):
+    # Mengecek validitas username dan password
+    connection = connect_db()
+    try:
+        with connection.cursor() as cursor:
+            query = "SELECT * FROM dokter WHERE username = %s"
+            cursor.execute(query, (username,))
+            result = cursor.fetchone()
+            
+            # Verifikasi password
+            if result and result['password'] == password:
+                return True
+            else:
+                return False
+    finally:
+        connection.close()
+

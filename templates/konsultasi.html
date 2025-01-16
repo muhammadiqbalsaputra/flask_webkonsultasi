@@ -132,30 +132,27 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="text-center">Data Konsultasi</h1>
-        <div class="mt-4">
+        <h1 class="text-center mb-4">Data Konsultasi</h1>
+        
+        <div class="row">
             {% for konsultasi in data %}
-            <div class="mb-4">
-                <h5>{{ konsultasi[1] }} ({{ konsultasi[2] }})</h5>
-                <p><strong>Keluhan:</strong> {{ konsultasi[2] }}</p>
-                <p><strong>Tanggal Konsultasi:</strong> {{ konsultasi[3] }}</p>
-                
-                {% if konsultasi[4] %}
-                    <p><strong>Balasan:</strong> {{ konsultasi[4] }}</p>
-                {% else %}
-                    <form method="POST">
-                        <input type="hidden" name="id_konsultasi" value="{{ konsultasi[0] }}">
-                        <div class="mb-3">
-                            <label for="balasan" class="form-label">Balasan Dokter</label>
-                            <textarea id="balasan" name="balasan" class="form-control" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-success">Kirim Balasan</button>
-                    </form>
-                {% endif %}
-            </div>
+                <div class="col-md-6 mb-4">
+                    <div class="consultation-card">
+                        <h5>{{ konsultasi[1] }} ({{ konsultasi[2] }})</h5>
+                        <p><strong>Keluhan:</strong> {{ konsultasi[2] }}</p>
+                        <p><strong>Tanggal Konsultasi:</strong> {{ konsultasi[3] }}</p>
+                        
+                        {% if konsultasi[4] %}
+                            <p><strong>Balasan Dokter:</strong> {{ konsultasi[4] }}</p>
+                        {% else %}
+                            <p class="no-reply">Belum ada balasan dari dokter.</p>
+                        {% endif %}
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </div>
+
 
     <footer>
         <div class="footer-container">
