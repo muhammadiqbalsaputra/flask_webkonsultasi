@@ -74,20 +74,29 @@ def get_konsultasi():
     conn.close()
     return data
 
-def validate_login(username, password):
-    # Mengecek validitas username dan password
-    connection = connect_db()
+
+def validate_user(username, password):
+    """Validasi username dan password dari database."""
+    connection = connect_db() 
     try:
         with connection.cursor() as cursor:
-            query = "SELECT * FROM dokter WHERE username = %s"
-            cursor.execute(query, (username,))
-            result = cursor.fetchone()
-            
-            # Verifikasi password
-            if result and result['password'] == password:
-                return True
-            else:
-                return False
+            sql = "SELECT * FROM dokter WHERE username = %s AND password = %s"
+            cursor.execute(sql, (username, password))
+            user = cursor.fetchone() 
+            return user  
     finally:
         connection.close()
 
+def get_dokter_data():
+    connection = pymysql.connect(host='localhost', user='root', password='password', db='mari_peduli')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM dokter")
+    rows = cursor.fetchall()
+    
+    columns = [column[0] for column in cursor.description]  # Mendapatkan nama kolom
+    data = [dict(zip(columns, row)) for row in rows]  # Menggabungkan kolom dengan data menjadi dictionary
+    
+    cursor.close()
+    connection.close()
+    
+    return data

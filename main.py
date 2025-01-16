@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from DB_Operations import get_konsultasi_data, update_balasan, get_konsultasi, insert_balasan, connect_db, validate_login
+from DB_Operations import get_konsultasi_data, update_balasan, get_konsultasi, insert_balasan, connect_db, validate_user
 
 import pymysql
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 # Route untuk halaman Beranda
 @app.route('/')
@@ -42,19 +43,19 @@ def konsultasi():
 # form login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
-        user = validate_login(username, password)
-        # Verifikasi username dan password
+
+        user = validate_user(username, password)
         if user:
             session['username'] = username
-            return redirect(url_for('konsultasidokter'))
+            return redirect('/konsultasidokter')  
         else:
-            return "Login gagal! Username atau password salah."
-    
-    return render_template('login.html')
+            error = "Invalid username or password."
+
+    return render_template('login.html', error=error)
 
 @app.route('/konsultasidokter')
 def konsultasidokter():
