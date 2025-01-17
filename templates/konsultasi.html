@@ -21,6 +21,11 @@
             transform: scale(1.1);
         }
 
+        .navbar-logo-custom {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-weight: bold;
+        }
+
         .footer-container {
             background-color: #d1f7d6;
             padding: 20px;
@@ -74,6 +79,17 @@
             color: #888;
         }
 
+        .custom-card-hover {
+            transition: transform 0.3s ease;
+        }
+
+        .custom-card-hover:hover {
+            transform: scale(1.05);
+            background-color: #b8e6bb;
+            cursor: pointer;
+        }
+
+
         .footer-container {
             background-color: #d1f7d6;
             /* Hijau muda */
@@ -111,7 +127,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
         <div class="container">
-            <a class="navbar-brand custom-nav-head" href="/">Mari Peduli</a>
+            <a class="navbar-brand custom-nav-head navbar-logo-custom" href="/">Mari Peduli</a>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -132,30 +148,31 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Data Konsultasi</h1>
-        
+        <h1 class="text-center mt-3">Data Konsultasi</h1>
+        <a href="/formkonsultasi" class="btn btn-outline-primary w-100 mt-5 mb-3">Tambah</a>
+
         <div class="row">
             {% for konsultasi in data %}
-                <div class="col-md-6 mb-4">
-                    <div class="consultation-card">
-                        <h5>{{ konsultasi[1] }} ({{ konsultasi[2] }})</h5>
-                        <p><strong>Keluhan:</strong> {{ konsultasi[2] }}</p>
-                        <p><strong>Tanggal Konsultasi:</strong> {{ konsultasi[3] }}</p>
-                        
-                        {% if konsultasi[4] %}
-                            <p><strong>Balasan Dokter:</strong> {{ konsultasi[4] }}</p>
-                        {% else %}
-                            <p class="no-reply">Belum ada balasan dari dokter.</p>
-                        {% endif %}
-                    </div>
+            <div class="col-md-6 mb-4">
+                <div class="consultation-card border border-info custom-card-hover">
+                    <h5>{{ konsultasi[1] }}</h5>
+                    <p><strong>Keluhan:</strong> {{ konsultasi[2] }}</p>
+                    <p><strong>Tanggal Konsultasi:</strong> {{ konsultasi[3] }}</p>
+
+                    {% if konsultasi[4] %}
+                    <p><strong>Balasan Dokter:</strong> {{ konsultasi[4] }}</p>
+                    {% else %}
+                    <p class="no-reply">Belum ada balasan dari dokter.</p>
+                    {% endif %}
                 </div>
+            </div>
             {% endfor %}
         </div>
     </div>
 
 
     <footer>
-        <div class="footer-container">
+        <div class="footer-container bg-dark">
             <div class="footer-logo">
                 <img src="{{ url_for('static', filename='img/Group 4.png') }}" alt="Company Logo" />
                 <p class="footer-description text-light">Anda Sehat Kami Senang</p>
@@ -165,4 +182,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

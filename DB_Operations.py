@@ -8,6 +8,26 @@ def connect_db():
         database='webkonsultasi'  # sesuaikan dengan nama database Anda
     )
 
+def fetch_all_items():
+    connect = connect_db()
+    try:
+        with connect.cursor() as cursor:
+            cursor.execute("SELECT * FROM dokter")
+            rows = cursor.fetchall()
+        return rows
+    finally:
+        connect.close()
+
+def fetch_all_konsultasi():
+    connection = connect_db()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM konsultasi")
+            result = cursor.fetchall()
+            return result
+    finally:
+        connection.close()
+
 def insert_consultation(nama, keluhan):
     conn = connect_db()
     try:
@@ -18,15 +38,6 @@ def insert_consultation(nama, keluhan):
     finally:
         conn.close()
 
-def get_all_consultations():
-    conn = connect_db()
-    try:
-        with conn.cursor() as cursor:
-            query = "SELECT nama, keluhan, tanggal_konsultasi FROM konsultasi"
-            cursor.execute(query)
-            return cursor.fetchall()  # Mengembalikan semua hasil query
-    finally:
-        conn.close()
 
 def get_konsultasi_data():
     conn = connect_db()
@@ -88,8 +99,8 @@ def validate_user(username, password):
         connection.close()
 
 def get_dokter_data():
-    connection = pymysql.connect(host='localhost', user='root', password='password', db='mari_peduli')
-    cursor = connection.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM dokter")
     rows = cursor.fetchall()
     
@@ -97,6 +108,30 @@ def get_dokter_data():
     data = [dict(zip(columns, row)) for row in rows]  # Menggabungkan kolom dengan data menjadi dictionary
     
     cursor.close()
-    connection.close()
+    conn.close()
     
     return data
+
+# Function to update a consultation (e.g., reply from doctor)
+def update_konsultasi_balasan(konsultasi_id, balasan):
+    connection = connect_db()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE konsultasi
+                SET balasan = %s
+                WHERE id = %s
+            """, (balasan, konsultasi_id))
+            connection.commit()
+    finally:
+        connection.close()
+
+# Function to delete a consultation
+def delete_konsultasi(konsultasi_id):
+    connection = connect_db()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM konsultasi WHERE id = %s", (konsultasi_id,))
+            connection.commit()
+    finally:
+        connection.close()
